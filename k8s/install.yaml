@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bonfim
+  namespace: bonfim
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bonfim
+  template:
+    metadata:
+      labels:
+        app: bonfim
+    spec:
+      containers:
+        - name: bonfim
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bonfim
+  namespace: bonfim
+spec:
+  selector:
+    app: bonfim
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bonfim
+  namespace: bonfim
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: bonfim.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bonfim
+                port:
+                  number: 80
