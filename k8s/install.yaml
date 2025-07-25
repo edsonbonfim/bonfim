@@ -4,7 +4,7 @@ metadata:
   name: bonfim
   namespace: bonfim
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: bonfim
@@ -32,23 +32,3 @@ spec:
       port: 80
       targetPort: 80
   type: LoadBalancer
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: bonfim
-  namespace: bonfim
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  rules:
-    - host: bonfim.local
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: bonfim
-                port:
-                  number: 80
